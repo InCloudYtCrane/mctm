@@ -17,6 +17,9 @@ public class MctmConfig {
     public int toastCooldownSec = 30;
     public boolean includeModListInReport = true;
 
+    /** 界面配色主题 id，见 {@link Theme#PRESETS}。 */
+    public String theme = Theme.DEFAULT.id;
+
     // 卡顿追踪器
     public int lagDetectThreshold = 30;
     public int lagMinDurationMs = 1000;
@@ -27,6 +30,11 @@ public class MctmConfig {
     public static MctmConfig get() {
         if (instance == null) load();
         return instance;
+    }
+
+    /** 当前生效的主题；配置缺失或 id 无效时回退到默认主题。 */
+    public static Theme getTheme() {
+        return Theme.byId(get().theme);
     }
 
     private static File getFile() {

@@ -50,14 +50,14 @@ public class SessionManager {
         try {
             if (mc.hasSingleplayerServer() && mc.getSingleplayerServer() != null) {
                 String name = mc.getSingleplayerServer().getWorldData().getLevelName();
-                worldName = "单人 · " + name;
+                worldName = Lang.get("mctm.session.world.singleplayer", name);
             } else if (mc.getCurrentServer() != null) {
-                worldName = "多人 · " + mc.getCurrentServer().ip;
+                worldName = Lang.get("mctm.session.world.multiplayer", mc.getCurrentServer().ip);
             } else {
-                worldName = "未知世界";
+                worldName = Lang.get("mctm.session.world.unknown");
             }
         } catch (Exception e) {
-            worldName = "未知世界";
+            worldName = Lang.get("mctm.session.world.unknown");
         }
     }
 
@@ -196,14 +196,15 @@ public class SessionManager {
             long h = sec / 3600;
             long m = (sec % 3600) / 60;
             long s = sec % 60;
-            if (h > 0) return String.format("%d时%d分", h, m);
-            if (m > 0) return String.format("%d分%d秒", m, s);
-            return s + "秒";
+            if (h > 0) return Lang.get("mctm.session.duration.hm", h, m);
+            if (m > 0) return Lang.get("mctm.session.duration.ms", m, s);
+            return Lang.get("mctm.session.duration.s", s);
         }
 
         public String lagText() {
-            if (lagCount == 0) return "无";
-            return lagCount + " 次 · " + String.format("%.1f", totalLagMs / 1000.0) + "s";
+            if (lagCount == 0) return Lang.get("mctm.session.lag.none");
+            return Lang.get("mctm.session.lag.value", lagCount,
+                    String.format("%.1f", totalLagMs / 1000.0));
         }
     }
 }

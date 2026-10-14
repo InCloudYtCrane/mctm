@@ -24,24 +24,24 @@ public class DiagnosisPage extends BasePage {
         buttonBounds.clear();
         buttonActions.clear();
 
-        PageDraw.text(g, Lang.get("mctm.diag.title"), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.diag.title"), x, y, PageDraw.COL_TEXT());
         y += 16;
 
         List<DiagnosisEngine.DiagItem> items =
                 DiagnosisEngine.diagnose(Minecraft.getInstance(), DataCache.getBlockEntityCounts());
 
         if (items.isEmpty()) {
-            PageDraw.text(g, Lang.get("mctm.diag.all_good"), x, y, PageDraw.COL_GREEN);
+            PageDraw.text(g, Lang.get("mctm.diag.all_good"), x, y, PageDraw.COL_GREEN());
             y += 14;
         } else {
             for (DiagnosisEngine.DiagItem item : items) {
                 String prefix;
                 int textColor;
                 switch (item.level) {
-                    case "warn" -> { prefix = "[!] "; textColor = PageDraw.COL_RED; }
-                    case "info" -> { prefix = "[i] "; textColor = PageDraw.COL_YELLOW; }
-                    case "good" -> { prefix = "[✓] "; textColor = PageDraw.COL_GREEN; }
-                    default     -> { prefix = ""; textColor = PageDraw.COL_TEXT; }
+                    case "warn" -> { prefix = "[!] "; textColor = PageDraw.COL_RED(); }
+                    case "info" -> { prefix = "[i] "; textColor = PageDraw.COL_YELLOW(); }
+                    case "good" -> { prefix = "[✓] "; textColor = PageDraw.COL_GREEN(); }
+                    default     -> { prefix = ""; textColor = PageDraw.COL_TEXT(); }
                 }
                 PageDraw.text(g, prefix + item.text, x, y, textColor);
 
@@ -55,7 +55,7 @@ public class DiagnosisPage extends BasePage {
                     boolean hovered = mouseX >= btnX && mouseX <= btnX + btnW
                             && mouseY >= btnY && mouseY <= btnY + btnH;
                     PageDraw.drawFlatButton(g, btnX, btnY, btnW, btnH, hovered);
-                    PageDraw.textCentered(g, label, btnX + btnW / 2, btnY + 2, PageDraw.COL_TEXT);
+                    PageDraw.textCentered(g, label, btnX + btnW / 2, btnY + 2, PageDraw.COL_TEXT());
 
                     buttonBounds.add(new int[]{btnX, btnY, btnW, btnH});
                     buttonActions.add(item.action);
@@ -64,7 +64,7 @@ public class DiagnosisPage extends BasePage {
                 y += 11;
 
                 if (item.detail != null && !item.detail.isEmpty()) {
-                    PageDraw.text(g, "     " + item.detail, x, y, PageDraw.COL_TEXT_SECOND);
+                    PageDraw.text(g, "     " + item.detail, x, y, PageDraw.COL_TEXT_SECOND());
                     y += 10;
                 }
                 y += 3;
@@ -72,9 +72,9 @@ public class DiagnosisPage extends BasePage {
         }
 
         y += 8;
-        PageDraw.text(g, Lang.get("mctm.diag.footer1"), x, y, PageDraw.COL_TEXT_SECOND);
+        PageDraw.text(g, Lang.get("mctm.diag.footer1"), x, y, PageDraw.COL_TEXT_SECOND());
         y += 11;
-        PageDraw.text(g, Lang.get("mctm.diag.footer2"), x, y, PageDraw.COL_TEXT_SECOND);
+        PageDraw.text(g, Lang.get("mctm.diag.footer2"), x, y, PageDraw.COL_TEXT_SECOND());
         y += 11;
         return y;
     }

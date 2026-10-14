@@ -127,7 +127,7 @@ public class MinecraftTaskManagerClient implements ClientModInitializer {
 				SystemToast.SystemToastId.PERIODIC_NOTIFICATION,
 				Component.translatable("mctm.toast.lag.title",
 						String.format("%.1f", rec.durationMs / 1000.0)),
-				Component.translatable("mctm.toast.lag.body", rec.minFps, rec.reason)
+				Component.translatable("mctm.toast.lag.body", rec.minFps, rec.reasonText())
 		));
 	}
 

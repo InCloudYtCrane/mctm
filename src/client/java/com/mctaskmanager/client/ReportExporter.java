@@ -32,7 +32,7 @@ public class ReportExporter {
 
             Map<String, Object> root = new LinkedHashMap<>();
             root.put("generatedAt", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-            root.put("modVersion", "1.0.0");
+            root.put("modVersion", modVersion());
 
             // 硬件信息
             Map<String, Object> hw = new LinkedHashMap<>();
@@ -135,6 +135,12 @@ public class ReportExporter {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private static String modVersion() {
+        return FabricLoader.getInstance().getModContainer("tkmanager")
+                .map(c -> c.getMetadata().getVersion().getFriendlyString())
+                .orElse("unknown");
     }
 
     private static String readActiveShaderPack() {

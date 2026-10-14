@@ -49,7 +49,7 @@ public class WorldPage extends BasePage {
     @Override
     public int render(GuiGraphics g, int x, int y, int mouseX, int mouseY) {
         if (mc.level == null) {
-            PageDraw.text(g, Lang.get("mctm.not_in_world"), x, y, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, Lang.get("mctm.not_in_world"), x, y, PageDraw.COL_TEXT_SECOND());
             y += 11;
             return y;
         }
@@ -68,28 +68,28 @@ public class WorldPage extends BasePage {
             entitySorted.removeIf(e -> !e.getKey().toLowerCase().contains(f));
         }
 
-        PageDraw.text(g, Lang.get("mctm.world.entity.title"), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.world.entity.title"), x, y, PageDraw.COL_TEXT());
         y += 13;
-        PageDraw.text(g, Lang.get("mctm.world.col.type"), x, y, PageDraw.COL_TEXT);
-        PageDraw.text(g, Lang.get("mctm.world.col.count"), x + 200, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.world.col.type"), x, y, PageDraw.COL_TEXT());
+        PageDraw.text(g, Lang.get("mctm.world.col.count"), x + 200, y, PageDraw.COL_TEXT());
         y += 10;
         PageDraw.drawSepH(g, x, y, parent.width - x - 15);
         y += 3;
 
         if (entitySorted.isEmpty()) {
-            PageDraw.text(g, Lang.get("mctm.world.entity.none"), x, y, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, Lang.get("mctm.world.entity.none"), x, y, PageDraw.COL_TEXT_SECOND());
             y += 11;
         } else {
             int ri = 0;
             for (Map.Entry<String, Integer> entry : entitySorted) {
                 if (ri % 2 == 1) {
-                    g.fill(x - 2, y, parent.width - 15, y + 11, 0x18FFFFFF);
+                    g.fill(x - 2, y, parent.width - 15, y + 11, PageDraw.COL_ROW_ALT());
                 }
                 ri++;
 
                 String typeName = entry.getKey();
                 int amount = entry.getValue();
-                int color = amount > 100 ? PageDraw.COL_RED : PageDraw.COL_TEXT;
+                int color = amount > 100 ? PageDraw.COL_RED() : PageDraw.COL_TEXT();
                 if (typeName.length() > 28) typeName = typeName.substring(0, 26) + "..";
                 PageDraw.text(g, typeName, x, y, color);
                 PageDraw.text(g, String.valueOf(amount), x + 200, y, color);
@@ -110,17 +110,19 @@ public class WorldPage extends BasePage {
         }
 
         int scanRadius = MctmConfig.get().scanRadius;
-        PageDraw.text(g, Lang.get("mctm.world.be.title", scanRadius), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.world.be.title", scanRadius), x, y, PageDraw.COL_TEXT());
         y += 13;
-        PageDraw.text(g, Lang.get("mctm.world.col.type"), x, y, PageDraw.COL_TEXT);
-        PageDraw.text(g, Lang.get("mctm.world.col.count"), x + 180, y, PageDraw.COL_TEXT);
-        PageDraw.text(g, Lang.get("mctm.world.col.offset"), x + 250, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.world.col.type"), x, y, PageDraw.COL_TEXT());
+        PageDraw.text(g, Lang.get("mctm.world.col.count"), x + 180, y, PageDraw.COL_TEXT());
+        PageDraw.text(g, Lang.get("mctm.world.col.offset"), x + 250, y, PageDraw.COL_TEXT());
         y += 10;
         PageDraw.drawSepH(g, x, y, parent.width - x - 15);
         y += 3;
 
         if (beSorted.isEmpty()) {
-            PageDraw.text(g, Lang.get("mctm.world.be.none"), x, y, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, f.isEmpty()
+                    ? Lang.get("mctm.world.be.none")
+                    : Lang.get("mctm.world.no_match"), x, y, PageDraw.COL_TEXT_SECOND());
             y += 11;
             return y;
         }
@@ -130,13 +132,13 @@ public class WorldPage extends BasePage {
         int ri = 0;
         for (Map.Entry<String, Integer> entry : beSorted) {
             if (ri % 2 == 1) {
-                g.fill(x - 2, y, parent.width - 15, y + 11, 0x18FFFFFF);
+                g.fill(x - 2, y, parent.width - 15, y + 11, PageDraw.COL_ROW_ALT());
             }
             ri++;
 
             String typeName = entry.getKey();
             int amount = entry.getValue();
-            int color = amount > 200 ? PageDraw.COL_RED : PageDraw.COL_TEXT;
+            int color = amount > 200 ? PageDraw.COL_RED() : PageDraw.COL_TEXT();
             if (typeName.length() > 24) typeName = typeName.substring(0, 22) + "..";
 
             PageDraw.text(g, typeName, x, y, color);
@@ -151,14 +153,14 @@ public class WorldPage extends BasePage {
                 int dy = avgY - playerPos.getY();
                 int dz = avgZ - playerPos.getZ();
                 PageDraw.text(g, String.format("(%+d, %+d, %+d)", dx, dy, dz),
-                        x + 250, y, PageDraw.COL_TEXT_SECOND);
+                        x + 250, y, PageDraw.COL_TEXT_SECOND());
             }
 
             y += 11;
         }
 
         y += 8;
-        PageDraw.text(g, Lang.get("mctm.world.offset_hint"), x, y, PageDraw.COL_TEXT_SECOND);
+        PageDraw.text(g, Lang.get("mctm.world.offset_hint"), x, y, PageDraw.COL_TEXT_SECOND());
         y += 11;
 
         return y;

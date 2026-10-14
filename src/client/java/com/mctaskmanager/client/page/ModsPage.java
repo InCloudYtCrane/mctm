@@ -61,12 +61,12 @@ public class ModsPage extends BasePage {
         }
 
         // 左侧标题
-        PageDraw.text(g, Lang.get("mctm.mods.title"), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.mods.title"), x, y, PageDraw.COL_TEXT());
 
         String summary = filter.isEmpty()
                 ? Lang.get("mctm.mods.summary", list.size(), PageDraw.formatSize(totalSize))
-                : "§7" + list.size() + " / " + all.size();
-        PageDraw.text(g, summary, x + 90, y, PageDraw.COL_TEXT_SECOND);
+                : "§7" + Lang.get("mctm.mods.filtered", list.size(), all.size());
+        PageDraw.text(g, summary, x + 90, y, PageDraw.COL_TEXT_SECOND());
 
         y += 15;
 
@@ -76,10 +76,10 @@ public class ModsPage extends BasePage {
         int colPercent = x + 310;
         int colBar = x + 370;
 
-        PageDraw.text(g, Lang.get("mctm.mods.col.name"), colName, y, PageDraw.COL_TEXT);
-        PageDraw.text(g, Lang.get("mctm.mods.col.size"), colSize, y, PageDraw.COL_TEXT);
-        PageDraw.text(g, Lang.get("mctm.mods.col.percent"), colPercent, y, PageDraw.COL_TEXT);
-        PageDraw.text(g, Lang.get("mctm.mods.col.bar"), colBar, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.mods.col.name"), colName, y, PageDraw.COL_TEXT());
+        PageDraw.text(g, Lang.get("mctm.mods.col.size"), colSize, y, PageDraw.COL_TEXT());
+        PageDraw.text(g, Lang.get("mctm.mods.col.percent"), colPercent, y, PageDraw.COL_TEXT());
+        PageDraw.text(g, Lang.get("mctm.mods.col.bar"), colBar, y, PageDraw.COL_TEXT());
         y += 10;
         PageDraw.drawSepH(g, x, y, parent.width - x - 15);
         y += 3;
@@ -90,13 +90,13 @@ public class ModsPage extends BasePage {
         for (DataCache.ModRow row : list) {
             int argb;
             switch (row.color) {
-                case "green" -> argb = PageDraw.COL_GREEN;
-                case "yellow" -> argb = PageDraw.COL_YELLOW;
-                default -> argb = PageDraw.COL_GRAY;
+                case "green" -> argb = PageDraw.COL_GREEN();
+                case "yellow" -> argb = PageDraw.COL_YELLOW();
+                default -> argb = PageDraw.COL_GRAY();
             }
 
             if (rowIndex % 2 == 1) {
-                g.fill(x - 2, y, parent.width - 15, y + CONTENT_ROW_HEIGHT, 0x18FFFFFF);
+                g.fill(x - 2, y, parent.width - 15, y + CONTENT_ROW_HEIGHT, PageDraw.COL_ROW_ALT());
             }
             rowIndex++;
 
@@ -105,11 +105,11 @@ public class ModsPage extends BasePage {
                 displayName = displayName.substring(0, 28) + "..";
             }
             g.fill(colName, y + 3, colName + 5, y + 8, argb);
-            PageDraw.text(g, displayName, colName + 8, y + 1, PageDraw.COL_TEXT);
-            PageDraw.text(g, row.sizeText(), colSize, y + 1, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, displayName, colName + 8, y + 1, PageDraw.COL_TEXT());
+            PageDraw.text(g, row.sizeText(), colSize, y + 1, PageDraw.COL_TEXT_SECOND());
 
             double percent = totalSize > 0 ? (row.sizeBytes * 100.0 / totalSize) : 0;
-            PageDraw.text(g, String.format("%.1f%%", percent), colPercent, y + 1, PageDraw.COL_TEXT);
+            PageDraw.text(g, String.format("%.1f%%", percent), colPercent, y + 1, PageDraw.COL_TEXT());
 
             double ratio = largestSize > 0 ? (double) row.sizeBytes / largestSize : 0;
             PageDraw.drawProgressBar(g, colBar, y + 1, barWidth, 9, ratio, argb);

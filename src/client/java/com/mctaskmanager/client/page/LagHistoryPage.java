@@ -1,6 +1,7 @@
 package com.mctaskmanager.client.page;
 
 import com.mctaskmanager.client.LagTracker;
+import com.mctaskmanager.client.Lang;
 import com.mctaskmanager.client.MinecraftTaskManagerClient;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -24,28 +25,28 @@ public class LagHistoryPage extends BasePage {
         LagTracker tracker = MinecraftTaskManagerClient.getLagTracker();
         List<LagTracker.LagRecord> records = tracker.getRecords();
 
-        PageDraw.text(g, "=== 卡顿记录 ===", x, y, PageDraw.COL_TEXT);
-        PageDraw.text(g, "最近 " + records.size() + " 次 / 最多 20 次",
-                x + 130, y, PageDraw.COL_TEXT_SECOND);
+        PageDraw.text(g, Lang.get("mctm.lag.title"), x, y, PageDraw.COL_TEXT());
+        PageDraw.text(g, Lang.get("mctm.lag.summary", records.size()),
+                x + 130, y, PageDraw.COL_TEXT_SECOND());
         y += 14;
-        PageDraw.text(g, "帧率低于 30 且持续 1 秒以上会自动记录",
-                x, y, PageDraw.COL_TEXT_SECOND);
+        PageDraw.text(g, Lang.get("mctm.lag.hint"),
+                x, y, PageDraw.COL_TEXT_SECOND());
         y += 14;
 
         if (records.isEmpty()) {
-            PageDraw.text(g, "暂时没有卡顿记录", x, y, PageDraw.COL_TEXT);
+            PageDraw.text(g, Lang.get("mctm.lag.empty"), x, y, PageDraw.COL_TEXT());
             y += 12;
-            PageDraw.text(g, "(帧率降到 30 以下并持续 1 秒以上就会记录)",
-                    x, y, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, Lang.get("mctm.lag.empty_hint"),
+                    x, y, PageDraw.COL_TEXT_SECOND());
             y += 12;
             return y;
         }
 
         // 表头
-        PageDraw.text(g, "时间", x, y, PageDraw.COL_TEXT);
-        PageDraw.text(g, "时长", x + 70, y, PageDraw.COL_TEXT);
-        PageDraw.text(g, "最低FPS", x + 130, y, PageDraw.COL_TEXT);
-        PageDraw.text(g, "可疑原因", x + 200, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.lag.col.time"), x, y, PageDraw.COL_TEXT());
+        PageDraw.text(g, Lang.get("mctm.lag.col.duration"), x + 70, y, PageDraw.COL_TEXT());
+        PageDraw.text(g, Lang.get("mctm.lag.col.minfps"), x + 130, y, PageDraw.COL_TEXT());
+        PageDraw.text(g, Lang.get("mctm.lag.col.reason"), x + 200, y, PageDraw.COL_TEXT());
         y += 10;
         PageDraw.drawSepH(g, x, y, parent.width - x - 15);
         y += 3;
@@ -60,26 +61,26 @@ public class LagHistoryPage extends BasePage {
                     && mouseY >= y && mouseY < y + ROW_HEIGHT;
 
             if (selected) {
-                g.fill(x - 2, y - 1, parent.width - 15, y + ROW_HEIGHT - 1, 0x30FFD040);
+                g.fill(x - 2, y - 1, parent.width - 15, y + ROW_HEIGHT - 1, PageDraw.COL_ROW_SELECTED());
             } else if (hovered) {
-                g.fill(x - 2, y - 1, parent.width - 15, y + ROW_HEIGHT - 1, 0x20FFFFFF);
+                g.fill(x - 2, y - 1, parent.width - 15, y + ROW_HEIGHT - 1, PageDraw.COL_ROW_HOVER());
             }
 
-            int fpsColor = rec.minFps < 15 ? PageDraw.COL_RED
-                    : rec.minFps < 25 ? PageDraw.COL_YELLOW
-                    : PageDraw.COL_TEXT;
+            int fpsColor = rec.minFps < 15 ? PageDraw.COL_RED()
+                    : rec.minFps < 25 ? PageDraw.COL_YELLOW()
+                    : PageDraw.COL_TEXT();
 
-            PageDraw.text(g, rec.timeText(), x, y, PageDraw.COL_TEXT);
-            PageDraw.text(g, rec.durationText(), x + 70, y, PageDraw.COL_TEXT);
+            PageDraw.text(g, rec.timeText(), x, y, PageDraw.COL_TEXT());
+            PageDraw.text(g, rec.durationText(), x + 70, y, PageDraw.COL_TEXT());
             PageDraw.text(g, String.valueOf(rec.minFps), x + 130, y, fpsColor);
 
             int reasonColor = switch (rec.reason) {
-                case "GC 停顿" -> PageDraw.COL_BLUE;
-                case "实体过多", "方块实体过多", "内存压力" -> PageDraw.COL_RED;
-                case "区块加载" -> PageDraw.COL_GOLD;
-                default -> PageDraw.COL_TEXT_SECOND;
+                case "gc" -> PageDraw.COL_BLUE();
+                case "entities", "blockentities", "memory" -> PageDraw.COL_RED();
+                case "chunks" -> PageDraw.COL_GOLD();
+                default -> PageDraw.COL_TEXT_SECOND();
             };
-            PageDraw.text(g, rec.reason, x + 200, y, reasonColor);
+            PageDraw.text(g, rec.reasonText(), x + 200, y, reasonColor);
 
             y += ROW_HEIGHT;
         }
@@ -92,62 +93,62 @@ public class LagHistoryPage extends BasePage {
             PageDraw.drawSepH(g, x, y, parent.width - x - 15);
             y += 6;
 
-            PageDraw.text(g, "=== 详情 ===", x, y, PageDraw.COL_TEXT);
+            PageDraw.text(g, Lang.get("mctm.lag.detail.title"), x, y, PageDraw.COL_TEXT());
             y += 12;
 
-            PageDraw.text(g, "时间:", x, y, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, rec.timeText(), x + 50, y, PageDraw.COL_TEXT);
+            PageDraw.text(g, Lang.get("mctm.lag.time"), x, y, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, rec.timeText(), x + 50, y, PageDraw.COL_TEXT());
             y += 11;
 
-            PageDraw.text(g, "位置:", x, y, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, rec.coordText(), x + 50, y, PageDraw.COL_TEXT);
-            PageDraw.text(g, "维度:", x + 220, y, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, rec.dimShort(), x + 260, y, PageDraw.COL_TEXT);
+            PageDraw.text(g, Lang.get("mctm.lag.pos"), x, y, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, rec.coordText(), x + 50, y, PageDraw.COL_TEXT());
+            PageDraw.text(g, Lang.get("mctm.lag.dim"), x + 220, y, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, rec.dimShort(), x + 260, y, PageDraw.COL_TEXT());
             y += 11;
 
-            PageDraw.text(g, "时长:", x, y, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, rec.durationText(), x + 50, y, PageDraw.COL_TEXT);
-            PageDraw.text(g, "最低:", x + 130, y, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, rec.minFps + " FPS", x + 170, y, PageDraw.COL_TEXT);
-            PageDraw.text(g, "平均:", x + 230, y, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, rec.avgFps + " FPS", x + 270, y, PageDraw.COL_TEXT);
+            PageDraw.text(g, Lang.get("mctm.lag.duration"), x, y, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, rec.durationText(), x + 50, y, PageDraw.COL_TEXT());
+            PageDraw.text(g, Lang.get("mctm.lag.min"), x + 130, y, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, Lang.get("mctm.unit.fps", rec.minFps), x + 170, y, PageDraw.COL_TEXT());
+            PageDraw.text(g, Lang.get("mctm.lag.avg"), x + 230, y, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, Lang.get("mctm.unit.fps", rec.avgFps), x + 270, y, PageDraw.COL_TEXT());
             y += 11;
 
-            PageDraw.text(g, "实体:", x, y, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, rec.entityCount + " 个", x + 50, y, PageDraw.COL_TEXT);
-            PageDraw.text(g, "区块:", x + 130, y, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, rec.chunkCount + " 个", x + 170, y, PageDraw.COL_TEXT);
+            PageDraw.text(g, Lang.get("mctm.lag.entities"), x, y, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, Lang.get("mctm.unit.count", rec.entityCount), x + 50, y, PageDraw.COL_TEXT());
+            PageDraw.text(g, Lang.get("mctm.lag.chunks"), x + 130, y, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, Lang.get("mctm.unit.count", rec.chunkCount), x + 170, y, PageDraw.COL_TEXT());
             y += 11;
 
-            PageDraw.text(g, "内存:", x, y, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, Lang.get("mctm.lag.memory"), x, y, PageDraw.COL_TEXT_SECOND());
             PageDraw.text(g, rec.memoryUsedMB + " / " + rec.memoryMaxMB + " MB",
-                    x + 50, y, PageDraw.COL_TEXT);
-            PageDraw.text(g, "GC:", x + 220, y, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, rec.gcTimeDuringLag + " ms", x + 250, y, PageDraw.COL_TEXT);
+                    x + 50, y, PageDraw.COL_TEXT());
+            PageDraw.text(g, Lang.get("mctm.lag.gc"), x + 220, y, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, rec.gcTimeDuringLag + " ms", x + 250, y, PageDraw.COL_TEXT());
             y += 14;
 
             // 诊断
-            PageDraw.text(g, "诊断:", x, y, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, rec.reason, x + 50, y, PageDraw.COL_RED);
+            PageDraw.text(g, Lang.get("mctm.lag.diagnosis"), x, y, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, rec.reasonText(), x + 50, y, PageDraw.COL_RED());
             y += 11;
-            PageDraw.text(g, rec.reasonDetail, x + 20, y, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, rec.reasonDetail, x + 20, y, PageDraw.COL_TEXT_SECOND());
             y += 14;
 
             if (!rec.topEntities.isEmpty()) {
-                PageDraw.text(g, "实体分布 (Top 3):", x, y, PageDraw.COL_TEXT);
+                PageDraw.text(g, Lang.get("mctm.lag.top_entities"), x, y, PageDraw.COL_TEXT());
                 y += 11;
                 for (String s : rec.topEntities) {
-                    PageDraw.text(g, "  " + s, x, y, PageDraw.COL_TEXT_SECOND);
+                    PageDraw.text(g, "  " + s, x, y, PageDraw.COL_TEXT_SECOND());
                     y += 10;
                 }
                 y += 3;
             }
 
             if (!rec.topBlockEntities.isEmpty()) {
-                PageDraw.text(g, "方块实体 (Top 3):", x, y, PageDraw.COL_TEXT);
+                PageDraw.text(g, Lang.get("mctm.lag.top_block_entities"), x, y, PageDraw.COL_TEXT());
                 y += 11;
                 for (String s : rec.topBlockEntities) {
-                    PageDraw.text(g, "  " + s, x, y, PageDraw.COL_TEXT_SECOND);
+                    PageDraw.text(g, "  " + s, x, y, PageDraw.COL_TEXT_SECOND());
                     y += 10;
                 }
                 y += 3;

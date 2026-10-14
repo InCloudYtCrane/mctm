@@ -12,11 +12,11 @@ public class ShadersPage extends BasePage {
 
     @Override
     public int render(GuiGraphics g, int x, int y, int mouseX, int mouseY) {
-        PageDraw.text(g, Lang.get("mctm.shaders.title"), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.shaders.title"), x, y, PageDraw.COL_TEXT());
         y += 15;
 
         String combo = detectOptimizationCombo();
-        PageDraw.text(g, Lang.get("mctm.shaders.current", combo), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.shaders.current", combo), x, y, PageDraw.COL_TEXT());
         y += 11;
 
         boolean hasIris = FabricLoader.getInstance().isModLoaded("iris")
@@ -28,35 +28,35 @@ public class ShadersPage extends BasePage {
         PageDraw.text(g, "Iris: " + (hasIris ? "✓" : "✗") +
                         "   OptiFine: " + (hasOptifine ? "✓" : "✗") +
                         "   Sodium: " + (hasSodium ? "✓" : "✗"),
-                x, y, PageDraw.COL_TEXT);
+                x, y, PageDraw.COL_TEXT());
         y += 15;
 
-        PageDraw.text(g, Lang.get("mctm.shaders.active"), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.shaders.active"), x, y, PageDraw.COL_TEXT());
         y += 13;
 
         String activePack = readActiveShaderPack();
         if (activePack == null) {
-            PageDraw.text(g, Lang.get("mctm.shaders.active_none"), x, y, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, Lang.get("mctm.shaders.active_none"), x, y, PageDraw.COL_TEXT_SECOND());
         } else {
-            PageDraw.text(g, "▶ " + activePack, x, y, PageDraw.COL_GREEN);
+            PageDraw.text(g, "▶ " + activePack, x, y, PageDraw.COL_GREEN());
         }
         y += 16;
 
-        PageDraw.text(g, Lang.get("mctm.shaders.installed"), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.shaders.installed"), x, y, PageDraw.COL_TEXT());
         y += 13;
 
         File gameDir = mc.gameDirectory;
         File shaderDir = new File(gameDir, "shaderpacks");
 
         if (!shaderDir.exists() || !shaderDir.isDirectory()) {
-            PageDraw.text(g, Lang.get("mctm.shaders.folder_missing"), x, y, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, Lang.get("mctm.shaders.folder_missing"), x, y, PageDraw.COL_TEXT_SECOND());
             y += 11;
             return y;
         }
 
         File[] files = shaderDir.listFiles();
         if (files == null || files.length == 0) {
-            PageDraw.text(g, Lang.get("mctm.shaders.folder_empty"), x, y, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, Lang.get("mctm.shaders.folder_empty"), x, y, PageDraw.COL_TEXT_SECOND());
             y += 11;
             return y;
         }
@@ -75,7 +75,7 @@ public class ShadersPage extends BasePage {
                             || name.replace(".zip", "").equals(activePack));
 
             String prefix = isActive ? "▶ " : "- ";
-            int textColor = isActive ? PageDraw.COL_GREEN : PageDraw.COL_TEXT;
+            int textColor = isActive ? PageDraw.COL_GREEN() : PageDraw.COL_TEXT();
 
             PageDraw.text(g, prefix + name + " (" + sizeText + ")", x, y, textColor);
             y += 11;

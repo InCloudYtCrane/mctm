@@ -18,6 +18,9 @@
 - **会话记录**：退出世界后自动保存本次游戏数据
 - **一键调设置**：诊断建议旁边直接改游戏设置
 - **导出报告**：所有数据导出为 JSON
+- **可切换界面主题**：内置 4 套配色（清爽浅色 / 深色青绿 / 深色蓝紫 / 原版扁平灰），在设置页即时切换
+
+![界面主题预览](docs/gui-preview.png)
 
 ## 安装
 
@@ -31,3 +34,18 @@
 - Minecraft: **1.21.1**
 - Fabric Loader: **>=0.16.0**
 - Java: **>=21**
+
+## 从源码构建
+
+构建本模组时，**Gradle 自身必须运行在 JDK 25 或更高版本上**（Loom 1.18.x 的要求）；
+模组产出的字节码仍然是 Java 21（`build.gradle` 里 `options.release = 21`），
+所以上面「支持版本」中的 Java >=21 依然成立。
+
+```bash
+# 确保 JAVA_HOME 指向 JDK 25+
+./gradlew build        # 产物：build/libs/tkmanager-<version>.jar
+./gradlew runClient    # 直接启动带本模组的客户端
+```
+
+Gradle 9.7.1 由 wrapper 自动下载（使用腾讯云镜像）。版本号统一由 `gradle.properties`
+的 `version` 决定，会注入 `fabric.mod.json` 的 `${version}` 占位符。

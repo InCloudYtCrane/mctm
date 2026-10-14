@@ -24,17 +24,19 @@ public class HardwarePage extends BasePage {
         buttonBounds.clear();
         buttonActions.clear();
 
-        PageDraw.text(g, Lang.get("mctm.hardware.title"), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.hardware.title"), x, y, PageDraw.COL_TEXT());
         y += 16;
 
         String cpu = ManualHardwareStore.getEffectiveCpu();
         String gpu = ManualHardwareStore.getEffectiveGpu();
         long ram = HardwareInfoCollector.getTotalRamGB();
-        String ramText = (ram < 0) ? "读取中..." : Lang.get("mctm.hardware.ram_value", ram);
+        String ramText = (ram < 0)
+                ? Lang.get("mctm.hardware.reading")
+                : Lang.get("mctm.hardware.ram_value", ram);
 
         // CPU
-        PageDraw.text(g, Lang.get("mctm.hardware.cpu") + ":", x, y, PageDraw.COL_TEXT);
-        PageDraw.text(g, cpu, x + 50, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.hardware.cpu") + ":", x, y, PageDraw.COL_TEXT());
+        PageDraw.text(g, cpu, x + 50, y, PageDraw.COL_TEXT());
         addSmallButton(g, x + 50 + Math.max(200, PageDraw.textWidth(cpu) + 30), y - 1,
                 Lang.get("mctm.hardware.edit"),
                 () -> {
@@ -43,8 +45,8 @@ public class HardwarePage extends BasePage {
         y += 15;
 
         // GPU
-        PageDraw.text(g, Lang.get("mctm.hardware.gpu") + ":", x, y, PageDraw.COL_TEXT);
-        PageDraw.text(g, gpu, x + 50, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.hardware.gpu") + ":", x, y, PageDraw.COL_TEXT());
+        PageDraw.text(g, gpu, x + 50, y, PageDraw.COL_TEXT());
         addSmallButton(g, x + 50 + Math.max(200, PageDraw.textWidth(gpu) + 30), y - 1,
                 Lang.get("mctm.hardware.edit"),
                 () -> {
@@ -53,11 +55,11 @@ public class HardwarePage extends BasePage {
         y += 15;
 
         // RAM
-        PageDraw.text(g, Lang.get("mctm.hardware.ram") + ":", x, y, PageDraw.COL_TEXT);
-        PageDraw.text(g, ramText, x + 50, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.hardware.ram") + ":", x, y, PageDraw.COL_TEXT());
+        PageDraw.text(g, ramText, x + 50, y, PageDraw.COL_TEXT());
         y += 18;
 
-        PageDraw.text(g, Lang.get("mctm.hardware.edit_hint"), x, y, PageDraw.COL_TEXT_SECOND);
+        PageDraw.text(g, Lang.get("mctm.hardware.edit_hint"), x, y, PageDraw.COL_TEXT_SECOND());
         y += 12;
 
         return y;
@@ -70,7 +72,7 @@ public class HardwarePage extends BasePage {
         boolean hovered = lastMouseX >= btnX && lastMouseX <= btnX + btnW
                 && lastMouseY >= y && lastMouseY <= y + btnH;
         PageDraw.drawFlatButton(g, btnX, y, btnW, btnH, hovered);
-        PageDraw.textCentered(g, label, btnX + btnW / 2, y + 2, PageDraw.COL_TEXT);
+        PageDraw.textCentered(g, label, btnX + btnW / 2, y + 2, PageDraw.COL_TEXT());
 
         buttonBounds.add(new int[]{btnX, y, btnW, btnH});
         buttonActions.add(onClick);

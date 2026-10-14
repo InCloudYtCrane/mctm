@@ -1,6 +1,7 @@
 package com.mctaskmanager.client.page;
 
 import com.mctaskmanager.client.DataCache;
+import com.mctaskmanager.client.Lang;
 import com.mctaskmanager.client.MctmConfig;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
@@ -19,6 +20,7 @@ public class HeatmapPage extends BasePage {
     private int switchBtnW = 0;
     private int switchBtnH = 14;
 
+    // 热力渐变属于数据语义色，不随主题变化（保证各主题下判读一致）
     private static final int[] LEGEND_COLORS = {
             0xFFEDEDED,
             0xFFFFF4A0,
@@ -27,7 +29,10 @@ public class HeatmapPage extends BasePage {
             0xFFFF6030,
             0xFFD03030,
     };
-    private static final int COL_UNLOADED = 0xFF505050;
+    /** 未加载区块的底色，取当前主题的灰色，避免深浅主题下都不协调。 */
+    private static int colUnloaded() {
+        return PageDraw.COL_GRAY();
+    }
 
     @Override
     public void onEnter() {
@@ -40,7 +45,7 @@ public class HeatmapPage extends BasePage {
         this.lastMouseY = mouseY;
 
         if (mc.level == null || mc.player == null) {
-            PageDraw.text(g, "请先进入一个世界", x, y, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, Lang.get("mctm.not_in_world"), x, y, PageDraw.COL_TEXT_SECOND());
             y += 11;
             return y;
         }
@@ -53,9 +58,11 @@ public class HeatmapPage extends BasePage {
         int gridPixels = gridSize * cellSize;
 
         // 顶部：标题 + 数据源切换
-        PageDraw.text(g, "=== 热力图 ===", x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.heatmap.title"), x, y, PageDraw.COL_TEXT());
 
-        String sourceLabel = dataSource == 0 ? "数据源: 方块实体" : "数据源: 实体";
+        String sourceLabel = dataSource == 0
+                ? Lang.get("mctm.heatmap.source.blockentities")
+                : Lang.get("mctm.heatmap.source.entities");
         int labelW = PageDraw.textWidth(sourceLabel) + 16;
         switchBtnX = parent.width - labelW - 20;
         switchBtnY = y - 2;
@@ -65,10 +72,10 @@ public class HeatmapPage extends BasePage {
         boolean btnHovered = mouseX >= switchBtnX && mouseX <= switchBtnX + switchBtnW
                 && mouseY >= switchBtnY && mouseY <= switchBtnY + switchBtnH;
         PageDraw.drawFlatButton(g, switchBtnX, switchBtnY, switchBtnW, switchBtnH, btnHovered);
-        PageDraw.textCentered(g, sourceLabel, switchBtnX + switchBtnW / 2, switchBtnY + 3, PageDraw.COL_TEXT);
+        PageDraw.textCentered(g, sourceLabel, switchBtnX + switchBtnW / 2, switchBtnY + 3, PageDraw.COL_TEXT());
 
         y += 14;
-        PageDraw.text(g, "每个格子 = 1 个区块，颜色越深数量越多", x, y, PageDraw.COL_TEXT_SECOND);
+        PageDraw.text(g, Lang.get("mctm.heatmap.hint"), x, y, PageDraw.COL_TEXT_SECOND());
         y += 14;
 
         BlockPos playerPos = mc.player.blockPosition();
@@ -86,7 +93,7 @@ public class HeatmapPage extends BasePage {
         int gridY = y;
 
         // 未加载底色
-        g.fill(gridX, gridY, gridX + gridPixels, gridY + gridPixels, COL_UNLOADED);
+        g.fill(gridX, gridY, gridX + gridPixels, gridY + gridPixels, colUnloaded());
 
         // 画格子
         for (int dz = -radius; dz <= radius; dz++) {
@@ -111,11 +118,12 @@ public class HeatmapPage extends BasePage {
             }
         }
 
-        // 外边框
-        g.fill(gridX - 1, gridY - 1, gridX + gridPixels + 1, gridY, 0xFF000000);
-        g.fill(gridX - 1, gridY + gridPixels, gridX + gridPixels + 1, gridY + gridPixels + 1, 0xFF000000);
-        g.fill(gridX - 1, gridY, gridX, gridY + gridPixels, 0xFF000000);
-        g.fill(gridX + gridPixels, gridY, gridX + gridPixels + 1, gridY + gridPixels, 0xFF000000);
+        // 外边框（跟随主题文字色，深浅主题下都清晰）
+        int gridEdge = PageDraw.COL_TEXT();
+        g.fill(gridX - 1, gridY - 1, gridX + gridPixels + 1, gridY, gridEdge);
+        g.fill(gridX - 1, gridY + gridPixels, gridX + gridPixels + 1, gridY + gridPixels + 1, gridEdge);
+        g.fill(gridX - 1, gridY, gridX, gridY + gridPixels, gridEdge);
+        g.fill(gridX + gridPixels, gridY, gridX + gridPixels + 1, gridY + gridPixels, gridEdge);
 
         // 玩家位置
         int playerGridX = gridX + radius * cellSize;
@@ -148,16 +156,17 @@ public class HeatmapPage extends BasePage {
         if (hoverDx != -9999) {
             int hx = gridX + (hoverDx + radius) * cellSize;
             int hy = gridY + (hoverDz + radius) * cellSize;
-            g.fill(hx, hy, hx + cellSize, hy + 1, 0xFFFFFFFF);
-            g.fill(hx, hy + cellSize - 1, hx + cellSize, hy + cellSize, 0xFFFFFFFF);
-            g.fill(hx, hy, hx + 1, hy + cellSize, 0xFFFFFFFF);
-            g.fill(hx + cellSize - 1, hy, hx + cellSize, hy + cellSize, 0xFFFFFFFF);
+            int hi = PageDraw.COL_TEXT();
+            g.fill(hx, hy, hx + cellSize, hy + 1, hi);
+            g.fill(hx, hy + cellSize - 1, hx + cellSize, hy + cellSize, hi);
+            g.fill(hx, hy, hx + 1, hy + cellSize, hi);
+            g.fill(hx + cellSize - 1, hy, hx + cellSize, hy + cellSize, hi);
         }
 
         y = gridY + gridPixels + 10;
 
         // ===== 图例 =====
-        PageDraw.text(g, "图例：", x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.heatmap.legend"), x, y, PageDraw.COL_TEXT());
         y += 12;
 
         int lx = x;
@@ -169,23 +178,23 @@ public class HeatmapPage extends BasePage {
                     : i == 3 ? "6-15"
                     : i == 4 ? "16-30"
                     : "31+";
-            g.fill(lx - 1, y - 1, lx + 11, y + 11, 0xFF000000);
+            g.fill(lx - 1, y - 1, lx + 11, y + 11, PageDraw.COL_TEXT());
             g.fill(lx, y, lx + 10, y + 10, color);
-            PageDraw.text(g, label, lx + 14, y + 1, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, label, lx + 14, y + 1, PageDraw.COL_TEXT_SECOND());
             lx += 14 + PageDraw.textWidth(label) + 10;
         }
         y += 16;
 
-        g.fill(x - 1, y - 1, x + 11, y + 11, 0xFF000000);
-        g.fill(x, y, x + 10, y + 10, COL_UNLOADED);
-        PageDraw.text(g, "= 未加载", x + 14, y + 1, PageDraw.COL_TEXT_SECOND);
+        g.fill(x - 1, y - 1, x + 11, y + 11, PageDraw.COL_TEXT());
+        g.fill(x, y, x + 10, y + 10, colUnloaded());
+        PageDraw.text(g, Lang.get("mctm.heatmap.unloaded"), x + 14, y + 1, PageDraw.COL_TEXT_SECOND());
         y += 16;
 
         g.fill(x + 1, y + 1, x + 9, y + 3, 0xFFFF2020);
         g.fill(x + 1, y + 7, x + 9, y + 9, 0xFFFF2020);
         g.fill(x + 1, y + 1, x + 3, y + 9, 0xFFFF2020);
         g.fill(x + 7, y + 1, x + 9, y + 9, 0xFFFF2020);
-        PageDraw.text(g, "= 你的位置", x + 14, y + 1, PageDraw.COL_TEXT_SECOND);
+        PageDraw.text(g, Lang.get("mctm.heatmap.you"), x + 14, y + 1, PageDraw.COL_TEXT_SECOND());
         y += 16;
 
         // 悬停信息
@@ -194,24 +203,28 @@ public class HeatmapPage extends BasePage {
             int hz = centerCZ + hoverDz;
             long key = ((long) hx << 32) | (hz & 0xFFFFFFFFL);
             Integer countObj = chunkData.get(key);
-            String unit = dataSource == 0 ? "个方块实体" : "个实体";
+            String unit = dataSource == 0
+                    ? Lang.get("mctm.heatmap.unit.blockentities")
+                    : Lang.get("mctm.heatmap.unit.entities");
 
-            PageDraw.text(g, "区块", x, y, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, "(" + hx + ", " + hz + ")", x + 40, y, PageDraw.COL_TEXT);
+            PageDraw.text(g, Lang.get("mctm.heatmap.chunk"), x, y, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, "(" + hx + ", " + hz + ")", x + 40, y, PageDraw.COL_TEXT());
 
             if (countObj == null) {
-                PageDraw.text(g, "· 未加载", x + 140, y, PageDraw.COL_TEXT_SECOND);
+                PageDraw.text(g, Lang.get("mctm.heatmap.cell.unloaded"), x + 140, y, PageDraw.COL_TEXT_SECOND());
             } else if (countObj == 0) {
-                PageDraw.text(g, "· 0 " + unit, x + 140, y, PageDraw.COL_TEXT_SECOND);
+                PageDraw.text(g, "· " + Lang.get("mctm.heatmap.cell.count", 0, unit),
+                        x + 140, y, PageDraw.COL_TEXT_SECOND());
             } else {
-                PageDraw.text(g, "· " + countObj + " " + unit, x + 140, y, PageDraw.COL_YELLOW);
+                PageDraw.text(g, "· " + Lang.get("mctm.heatmap.cell.count", countObj, unit),
+                        x + 140, y, PageDraw.COL_YELLOW());
             }
             y += 12;
         }
 
         // ===== 统计 =====
         y += 6;
-        PageDraw.text(g, "当前区域统计：", x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.heatmap.stats"), x, y, PageDraw.COL_TEXT());
         y += 12;
 
         int total = 0;
@@ -231,27 +244,29 @@ public class HeatmapPage extends BasePage {
             }
         }
 
-        String unit = dataSource == 0 ? "方块实体" : "实体";
+        String unit = dataSource == 0
+                ? Lang.get("mctm.heatmap.unit.short.blockentities")
+                : Lang.get("mctm.heatmap.unit.short.entities");
 
-        PageDraw.text(g, "已加载区块:", x, y, PageDraw.COL_TEXT_SECOND);
-        PageDraw.text(g, loadedChunks + " / " + (gridSize * gridSize), x + 90, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.heatmap.loaded"), x, y, PageDraw.COL_TEXT_SECOND());
+        PageDraw.text(g, loadedChunks + " / " + (gridSize * gridSize), x + 90, y, PageDraw.COL_TEXT());
         y += 11;
 
-        PageDraw.text(g, unit + "总数:", x, y, PageDraw.COL_TEXT_SECOND);
-        PageDraw.text(g, String.valueOf(total), x + 90, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.heatmap.total_unit", unit), x, y, PageDraw.COL_TEXT_SECOND());
+        PageDraw.text(g, String.valueOf(total), x + 90, y, PageDraw.COL_TEXT());
         y += 11;
 
-        PageDraw.text(g, "高密度区块 (≥6):", x, y, PageDraw.COL_TEXT_SECOND);
+        PageDraw.text(g, Lang.get("mctm.heatmap.hot"), x, y, PageDraw.COL_TEXT_SECOND());
         PageDraw.text(g, String.valueOf(hotChunks), x + 130, y,
-                hotChunks > 0 ? PageDraw.COL_YELLOW : PageDraw.COL_TEXT);
+                hotChunks > 0 ? PageDraw.COL_YELLOW() : PageDraw.COL_TEXT());
         y += 11;
 
         if (maxCount > 0) {
-            PageDraw.text(g, "最高密度区块:", x, y, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, maxCount + " 个  (" + maxChunkX + ", " + maxChunkZ + ")",
-                    x + 100, y, PageDraw.COL_TEXT);
+            PageDraw.text(g, Lang.get("mctm.heatmap.peak"), x, y, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, Lang.get("mctm.heatmap.peak.value", maxCount, maxChunkX, maxChunkZ),
+                    x + 100, y, PageDraw.COL_TEXT());
         } else {
-            PageDraw.text(g, "最高密度区块: 0 个", x, y, PageDraw.COL_TEXT);
+            PageDraw.text(g, Lang.get("mctm.heatmap.peak.none"), x, y, PageDraw.COL_TEXT());
         }
         y += 11;
 

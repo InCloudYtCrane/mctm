@@ -72,7 +72,16 @@ public class MctmConfigScreen extends Screen {
                 .create(cx - w / 2, y, w, h,
                         Component.translatable("mctm.config.include_mods"),
                         (btn, val) -> cfg.includeModListInReport = val));
-        y += gap + 10;
+        y += gap;
+
+        // 界面主题
+        addRenderableWidget(CycleButton.builder(this::themeLabel)
+                .withValues(java.util.List.of(Theme.PRESETS))
+                .withInitialValue(MctmConfig.getTheme())
+                .create(cx - w / 2, y, w, h,
+                        Component.translatable("mctm.config.theme"),
+                        (btn, val) -> cfg.theme = val.id));
+        y += gap;
 
         // 完成按钮
         addRenderableWidget(Button.builder(
@@ -95,6 +104,13 @@ public class MctmConfigScreen extends Screen {
     public void onClose() {
         cfg.save();
         if (minecraft != null) minecraft.setScreen(parent);
+    }
+
+    /** 主题在按钮上显示为“主题名 · 说明”。 */
+    private Component themeLabel(Theme theme) {
+        return Component.translatable(theme.nameKey())
+                .append(Component.literal(" · "))
+                .append(Component.translatable(theme.descKey()));
     }
 
     // ===== 内部类：整数滑块 =====

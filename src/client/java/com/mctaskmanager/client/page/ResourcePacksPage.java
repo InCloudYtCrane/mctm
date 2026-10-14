@@ -42,7 +42,7 @@ public class ResourcePacksPage extends BasePage {
 
     @Override
     public int render(GuiGraphics g, int x, int y, int mouseX, int mouseY) {
-        PageDraw.text(g, Lang.get("mctm.packs.title"), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.packs.title"), x, y, PageDraw.COL_TEXT());
         y += 15;
 
         File rpDir = new File(mc.gameDirectory, "resourcepacks");
@@ -57,8 +57,8 @@ public class ResourcePacksPage extends BasePage {
         if (packs.isEmpty()) {
             String msg = filter.isEmpty()
                     ? Lang.get("mctm.packs.none")
-                    : "§7(无匹配结果)";
-            PageDraw.text(g, msg, x, y, PageDraw.COL_TEXT_SECOND);
+                    : "§7" + Lang.get("mctm.packs.no_match");
+            PageDraw.text(g, msg, x, y, PageDraw.COL_TEXT_SECOND());
             y += 11;
             return y;
         }
@@ -78,7 +78,7 @@ public class ResourcePacksPage extends BasePage {
                     }
                 }
             }
-            PageDraw.text(g, "- " + packName + "  (" + sizeText + ")", x, y, PageDraw.COL_TEXT);
+            PageDraw.text(g, "- " + packName + "  (" + sizeText + ")", x, y, PageDraw.COL_TEXT());
             y += 11;
         }
 

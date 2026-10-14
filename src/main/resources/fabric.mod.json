@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "tkmanager",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"name": "Minecraft Task Manager",
 	"description": "游戏内性能诊断工具：实时监控帧率与资源占用，查看已装载模组、资源包、光影与硬件信息，自动检测卡顿并给出可执行的优化建议。\nAn in-game performance diagnostic tool for Minecraft: monitor FPS and resource usage, inspect loaded mods, resource packs, shaders and hardware, auto-detect lag spikes and provide actionable optimization tips.",
 	"authors": [
@@ -19,7 +19,8 @@
 		]
 	},
 	"mixins": [
-		"tkmanager.mixins.json"
+		"tkmanager.mixins.json",
+		"tkmanager.client.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.16.0",

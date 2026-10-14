@@ -40,6 +40,33 @@ public class LagTracker {
     private long lastNotificationTime = 0;
     private static final long NOTIFICATION_COOLDOWN_MS = 10_000L;
 
+    /** 卡顿归因类别：id 用于逻辑判断与持久化，语言键用于显示。 */
+    public enum Reason {
+        GC_PAUSE("gc"),
+        TOO_MANY_ENTITIES("entities"),
+        TOO_MANY_BLOCK_ENTITIES("blockentities"),
+        CHUNK_LOADING("chunks"),
+        MEMORY_PRESSURE("memory"),
+        UNKNOWN("unknown");
+
+        public final String id;
+
+        Reason(String id) {
+            this.id = id;
+        }
+
+        public String langKey() {
+            return "mctm.lag.reason." + id + ".title";
+        }
+
+        public static String titleOf(String id) {
+            for (Reason r : values()) {
+                if (r.id.equals(id)) return Lang.get(r.langKey());
+            }
+            return Lang.get(UNKNOWN.langKey());
+        }
+    }
+
     public List<LagRecord> getRecords() {
         return records;
     }
@@ -165,44 +192,45 @@ public class LagTracker {
 
     private void analyze(LagRecord rec) {
         if (rec.gcTimeDuringLag > rec.durationMs * 0.3 && rec.gcTimeDuringLag > 100) {
-            rec.reason = "GC 停顿";
-            rec.reasonDetail = String.format("卡顿期间 GC 总计 %d ms，占 %.0f%%",
+            rec.reason = Reason.GC_PAUSE.id;
+            rec.reasonDetail = Lang.get("mctm.lag.reason.gc.detail",
                     rec.gcTimeDuringLag, rec.gcTimeDuringLag * 100.0 / rec.durationMs);
             return;
         }
 
         if (rec.entityCount > 200) {
-            rec.reason = "实体过多";
+            rec.reason = Reason.TOO_MANY_ENTITIES.id;
             String top = rec.topEntities.isEmpty() ? "" : rec.topEntities.get(0);
-            rec.reasonDetail = "附近有 " + rec.entityCount + " 个实体，最多的是 " + top;
+            rec.reasonDetail = Lang.get("mctm.lag.reason.entities.detail", rec.entityCount, top);
             return;
         }
 
         int totalBe = 0;
         for (int v : DataCache.getBlockEntityCounts().values()) totalBe += v;
         if (totalBe > 200) {
-            rec.reason = "方块实体过多";
+            rec.reason = Reason.TOO_MANY_BLOCK_ENTITIES.id;
             String top = rec.topBlockEntities.isEmpty() ? "" : rec.topBlockEntities.get(0);
-            rec.reasonDetail = "附近有 " + totalBe + " 个方块实体，最多的是 " + top;
+            rec.reasonDetail = Lang.get("mctm.lag.reason.blockentities.detail", totalBe, top);
             return;
         }
 
         int chunkDelta = rec.chunkCount - rec.chunkCountAtStart;
         if (chunkDelta > 30) {
-            rec.reason = "区块加载";
-            rec.reasonDetail = "卡顿期间新增加载了 " + chunkDelta + " 个区块";
+            rec.reason = Reason.CHUNK_LOADING.id;
+            rec.reasonDetail = Lang.get("mctm.lag.reason.chunks.detail", chunkDelta);
             return;
         }
 
         double memRatio = (double) rec.memoryUsedMB / rec.memoryMaxMB;
         if (memRatio > 0.85) {
-            rec.reason = "内存压力";
-            rec.reasonDetail = String.format("内存使用率 %.0f%%，建议调大 -Xmx", memRatio * 100);
+            rec.reason = Reason.MEMORY_PRESSURE.id;
+            rec.reasonDetail = Lang.get("mctm.lag.reason.memory.detail",
+                    String.format("%.0f", memRatio * 100));
             return;
         }
 
-        rec.reason = "未知原因";
-        rec.reasonDetail = "可能是某个模组的临时负载，或客户端瞬时卡顿";
+        rec.reason = Reason.UNKNOWN.id;
+        rec.reasonDetail = Lang.get("mctm.lag.reason.unknown.detail");
     }
 
     private long getTotalGcTime() {
@@ -242,6 +270,7 @@ public class LagTracker {
         public long gcTimeDuringLag;
         public List<String> topEntities = new ArrayList<>();
         public List<String> topBlockEntities = new ArrayList<>();
+        /** 归因类别 id（Reason.id），显示时用 reasonText() 取本地化标题。 */
         public String reason = "";
         public String reasonDetail = "";
 
@@ -251,7 +280,12 @@ public class LagTracker {
         }
 
         public String durationText() {
-            return String.format("%.1f 秒", durationMs / 1000.0);
+            return Lang.get("mctm.unit.seconds", String.format("%.1f", durationMs / 1000.0));
+        }
+
+        /** 归因类别的本地化标题。 */
+        public String reasonText() {
+            return Reason.titleOf(reason);
         }
 
         public String coordText() {

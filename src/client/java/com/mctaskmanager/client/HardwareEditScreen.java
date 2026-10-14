@@ -1,5 +1,6 @@
 package com.mctaskmanager.client;
 
+import com.mctaskmanager.client.page.PageDraw;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -34,7 +35,7 @@ public class HardwareEditScreen extends Screen {
         String current = isCpu
                 ? ManualHardwareStore.getEffectiveCpu()
                 : ManualHardwareStore.getEffectiveGpu();
-        if (current != null && !current.startsWith("读取中")) {
+        if (current != null && !current.equals(Lang.get("mctm.hardware.reading"))) {
             editBox.setValue(current);
         } else {
             editBox.setValue("");
@@ -67,10 +68,10 @@ public class HardwareEditScreen extends Screen {
 
         g.drawCenteredString(this.font,
                 Lang.get("mctm.hardware.input_title") + " · " + (isCpu ? "CPU" : "GPU"),
-                this.width / 2, this.height / 2 - 50, 0xFFFFFFFF);
+                this.width / 2, this.height / 2 - 50, PageDraw.COL_TEXT());
         g.drawCenteredString(this.font,
-                "§7" + Lang.get("mctm.hardware.input_hint"),
-                this.width / 2, this.height / 2 - 36, 0xFFAAAAAA);
+                Lang.get("mctm.hardware.input_hint"),
+                this.width / 2, this.height / 2 - 36, PageDraw.COL_TEXT_SECOND());
     }
 
     @Override

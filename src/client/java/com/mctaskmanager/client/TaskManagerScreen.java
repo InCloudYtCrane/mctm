@@ -190,13 +190,15 @@ public class TaskManagerScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float delta) {
-        g.fill(0, 0, this.width, this.height, PageDraw.COL_BG);
-        g.fill(0, 0, this.width, TOP_BAR_HEIGHT, PageDraw.COL_BG_MENU);
-        g.fill(0, TOP_BAR_HEIGHT, SIDEBAR_WIDTH, this.height, PageDraw.COL_BG_MENU);
-        g.fill(0, TOP_BAR_HEIGHT, this.width, TOP_BAR_HEIGHT + 1, PageDraw.COL_SEP);
-        g.fill(SIDEBAR_WIDTH, TOP_BAR_HEIGHT, SIDEBAR_WIDTH + 1, this.height, PageDraw.COL_SEP);
+        g.fill(0, 0, this.width, this.height, PageDraw.COL_BG());
+        // 卡片式内容区（仅启用卡片层次的主题可见）
+        PageDraw.drawCard(g, SIDEBAR_WIDTH + 4, TOP_BAR_HEIGHT + 4, this.width - SIDEBAR_WIDTH - 8, this.height - TOP_BAR_HEIGHT - 12);
+        g.fill(0, 0, this.width, TOP_BAR_HEIGHT, PageDraw.COL_BG_MENU());
+        g.fill(0, TOP_BAR_HEIGHT, SIDEBAR_WIDTH, this.height, PageDraw.COL_BG_MENU());
+        g.fill(0, TOP_BAR_HEIGHT, this.width, TOP_BAR_HEIGHT + 1, PageDraw.COL_SEP());
+        g.fill(SIDEBAR_WIDTH, TOP_BAR_HEIGHT, SIDEBAR_WIDTH + 1, this.height, PageDraw.COL_SEP());
 
-        PageDraw.text(g, this.title.getString(), 8, 6, PageDraw.COL_TEXT);
+        PageDraw.text(g, this.title.getString(), 8, 6, PageDraw.COL_TEXT());
         renderTopBar(g);
         renderSidebar(g, mouseX, mouseY);
 
@@ -209,7 +211,7 @@ public class TaskManagerScreen extends Screen {
         int endY;
         BasePage cur = pages[currentPageIndex];
         if (cur == null) {
-            PageDraw.text(g, "§7施工中...", contentX, baseY, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, "§7施工中...", contentX, baseY, PageDraw.COL_TEXT_SECOND());
             endY = baseY + 14;
         } else {
             endY = cur.render(g, contentX, baseY, mouseX, mouseY);
@@ -240,14 +242,15 @@ public class TaskManagerScreen extends Screen {
         Minecraft mc = Minecraft.getInstance();
         int y = 18;
 
-        PageDraw.text(g, "FPS " + mc.getFps(), 8, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.topbar.fps", mc.getFps()), 8, y, PageDraw.COL_TEXT());
 
         long used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         long max  = Runtime.getRuntime().maxMemory();
         double usedGB = used / 1024.0 / 1024.0 / 1024.0;
         double maxGB  = max  / 1024.0 / 1024.0 / 1024.0;
-        int memColor = (usedGB > maxGB * 0.8) ? PageDraw.COL_RED : PageDraw.COL_TEXT;
-        PageDraw.text(g, String.format("MEM %.2f/%.2fG", usedGB, maxGB), 70, y, memColor);
+        int memColor = (usedGB > maxGB * 0.8) ? PageDraw.COL_RED() : PageDraw.COL_TEXT();
+        PageDraw.text(g, Lang.get("mctm.topbar.memory",
+                String.format("%.2f", usedGB), String.format("%.2f", maxGB)), 70, y, memColor);
 
         int chunks = 0;
         if (mc.level != null) {
@@ -255,10 +258,10 @@ public class TaskManagerScreen extends Screen {
                 chunks = mc.level.getChunkSource().getLoadedChunksCount();
             } catch (Exception ignored) {}
         }
-        PageDraw.text(g, "CHK " + chunks, 220, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.topbar.chunks", chunks), 220, y, PageDraw.COL_TEXT());
 
         int entities = mc.level != null ? mc.level.getEntityCount() : 0;
-        PageDraw.text(g, "ENT " + entities, 300, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.topbar.entities", entities), 300, y, PageDraw.COL_TEXT());
     }
 
     private void renderSidebar(GuiGraphics g, int mouseX, int mouseY) {
@@ -270,10 +273,10 @@ public class TaskManagerScreen extends Screen {
                     && mouseY >= rowY && mouseY < rowY + MENU_ROW_HEIGHT;
 
             if (selected) {
-                g.fill(0, rowY, SIDEBAR_WIDTH, rowY + MENU_ROW_HEIGHT, PageDraw.COL_MENU_SELECTED);
-                g.fill(0, rowY, 3, rowY + MENU_ROW_HEIGHT, PageDraw.COL_ACCENT);
+                g.fill(0, rowY, SIDEBAR_WIDTH, rowY + MENU_ROW_HEIGHT, PageDraw.COL_MENU_SELECTED());
+                g.fill(0, rowY, 3, rowY + MENU_ROW_HEIGHT, PageDraw.COL_ACCENT());
             } else if (hovered) {
-                g.fill(0, rowY, SIDEBAR_WIDTH, rowY + MENU_ROW_HEIGHT, PageDraw.COL_MENU_HOVER);
+                g.fill(0, rowY, SIDEBAR_WIDTH, rowY + MENU_ROW_HEIGHT, PageDraw.COL_MENU_HOVER());
             }
 
             // 卡顿历史页：如果有未读记录，画一个小红点
@@ -282,7 +285,7 @@ public class TaskManagerScreen extends Screen {
                 label = "§c● §r" + label;
             }
 
-            int textColor = selected ? PageDraw.COL_TEXT : PageDraw.COL_TEXT_SECOND;
+            int textColor = selected ? PageDraw.COL_TEXT() : PageDraw.COL_TEXT_SECOND();
             PageDraw.text(g, label, 8, rowY + 4, textColor);
 
             rowY += MENU_ROW_HEIGHT;
@@ -298,14 +301,14 @@ public class TaskManagerScreen extends Screen {
         int barBottom = this.height - 4;
         int barHeight = barBottom - barTop;
 
-        g.fill(barX, barTop, barX + 4, barBottom, 0xFFB0B0B0);
+        g.fill(barX, barTop, barX + 4, barBottom, PageDraw.COL_SCROLL_TRACK());
 
         double ratio = viewHeight / currentContentHeight;
         int thumbHeight = Math.max(20, (int) (barHeight * ratio));
         double scrollRatio = scrollOffsets[currentPageIndex] / Math.max(1, currentContentHeight - viewHeight);
         int thumbY = barTop + (int) ((barHeight - thumbHeight) * scrollRatio);
 
-        g.fill(barX, thumbY, barX + 4, thumbY + thumbHeight, 0xFF888888);
+        g.fill(barX, thumbY, barX + 4, thumbY + thumbHeight, PageDraw.COL_SCROLL_THUMB());
     }
 
     @Override

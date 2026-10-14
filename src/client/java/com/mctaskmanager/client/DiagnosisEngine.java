@@ -48,10 +48,10 @@ public class DiagnosisEngine {
 
         if (renderDist >= 20 && avgFps > 0 && avgFps < 60) {
             items.add(new DiagItem("warn",
-                    String.format("视距 %d 偏高，平均帧率只有 %d", renderDist, avgFps),
-                    "建议降到 12-16，帧率通常能翻倍",
+                    Lang.get("mctm.diag.renderdist.text", renderDist, avgFps),
+                    Lang.get("mctm.diag.renderdist.detail"),
                     new Action() {
-                        public String label() { return "降到 12"; }
+                        public String label() { return Lang.get("mctm.diag.renderdist.action"); }
                         public void run() { mc.options.renderDistance().set(12); }
                     }));
         }
@@ -65,16 +65,16 @@ public class DiagnosisEngine {
 
             if (avgFps >= refreshRate - 3) {
                 items.add(new DiagItem("info",
-                        String.format("垂直同步锁定在 %d FPS", refreshRate),
-                        "真实性能可能远高于这个数字，关掉可看真实帧率",
+                        Lang.get("mctm.diag.vsync.locked.text", refreshRate),
+                        Lang.get("mctm.diag.vsync.locked.detail"),
                         new Action() {
-                            public String label() { return "关闭"; }
+                            public String label() { return Lang.get("mctm.diag.vsync.locked.action"); }
                             public void run() { mc.options.enableVsync().set(false); }
                         }));
             } else if (avgFps < refreshRate) {
                 items.add(new DiagItem("warn",
-                        "垂直同步开启，但帧率达不到刷新率",
-                        "说明硬件确实跑不到刷新率，不只是被锁帧"));
+                        Lang.get("mctm.diag.vsync.slow.title"),
+                        Lang.get("mctm.diag.vsync.slow.detail")));
             }
         }
 
@@ -84,28 +84,28 @@ public class DiagnosisEngine {
 
         if (!hasSodium) {
             items.add(new DiagItem("warn",
-                    "未检测到 Sodium / Embeddium",
-                    "这两个渲染优化模组通常能提升 30%+ 的帧率，强烈建议安装"));
+                    Lang.get("mctm.diag.sodium.missing.title"),
+                    Lang.get("mctm.diag.sodium.missing.detail")));
         } else {
-            items.add(new DiagItem("good", "已安装渲染优化模组 Sodium", null));
+            items.add(new DiagItem("good", Lang.get("mctm.diag.sodium.ok"), null));
         }
 
         if (!hasLithium) {
             items.add(new DiagItem("info",
-                    "未检测到 Lithium",
-                    "Lithium 优化服务端逻辑，单人游戏也能受益"));
+                    Lang.get("mctm.diag.lithium.missing.title"),
+                    Lang.get("mctm.diag.lithium.missing.detail")));
         }
 
         if (avgFrameTime > 33 && avgFps > 0) {
             items.add(new DiagItem("warn",
-                    String.format("平均帧时间 %.1f ms，超过 33ms", avgFrameTime),
-                    "每帧处理时间偏长，尝试降低视距或关闭光影"));
+                    Lang.get("mctm.diag.frametime.title", String.format("%.1f", avgFrameTime)),
+                    Lang.get("mctm.diag.frametime.detail")));
         }
 
         if (avgFps > 0 && low1 > 0 && avgFps - low1 > 20) {
             items.add(new DiagItem("warn",
-                    String.format("1%% Low 只有 %d，与平均值 %d 差距较大", low1, avgFps),
-                    "存在间歇性卡顿，可能是 GC 或区块加载导致"));
+                    Lang.get("mctm.diag.low1.title", low1, avgFps),
+                    Lang.get("mctm.diag.low1.detail")));
         }
 
         for (var entry : blockEntityCounts.entrySet()) {
@@ -114,16 +114,16 @@ public class DiagnosisEngine {
 
             if (type.equals("hopper") && count > 100) {
                 items.add(new DiagItem("warn",
-                        String.format("检测到 %d 个漏斗", count),
-                        "漏斗是性能杀手，考虑用漏斗矿车或合并"));
+                        Lang.get("mctm.diag.hopper.title", count),
+                        Lang.get("mctm.diag.hopper.detail")));
             } else if (type.equals("chest") && count > 500) {
                 items.add(new DiagItem("info",
-                        String.format("检测到 %d 个箱子", count),
-                        "大量箱子占用内存，考虑用存储模组"));
+                        Lang.get("mctm.diag.chest.title", count),
+                        Lang.get("mctm.diag.chest.detail")));
             } else if (type.equals("furnace") && count > 100) {
                 items.add(new DiagItem("info",
-                        String.format("检测到 %d 个熔炉", count),
-                        "熔炉持续 tick，考虑用烟熏炉"));
+                        Lang.get("mctm.diag.furnace.title", count),
+                        Lang.get("mctm.diag.furnace.detail")));
             }
         }
 
@@ -131,8 +131,8 @@ public class DiagnosisEngine {
             int entityCount = mc.level.getEntityCount();
             if (entityCount > 500) {
                 items.add(new DiagItem("warn",
-                        String.format("附近有 %d 个实体", entityCount),
-                        "实体多会拖慢 CPU，检查刷怪塔、掉落物"));
+                        Lang.get("mctm.diag.entities.title", entityCount),
+                        Lang.get("mctm.diag.entities.detail")));
             }
         }
 
@@ -141,21 +141,21 @@ public class DiagnosisEngine {
         double memRatio = (double) used / max;
         if (memRatio > 0.85) {
             items.add(new DiagItem("warn",
-                    String.format("堆内存使用率 %.0f%%", memRatio * 100),
-                    "内存压力大，考虑调大 -Xmx 或减少模组"));
+                    Lang.get("mctm.diag.memory.title", String.format("%.0f", memRatio * 100)),
+                    Lang.get("mctm.diag.memory.detail")));
         }
 
         long gcTime10s = monitor.getGcTimeLast10s();
         if (gcTime10s > 2000) {
             items.add(new DiagItem("warn",
-                    String.format("最近 10 秒 GC 耗时 %d ms", gcTime10s),
-                    "GC 太频繁，通常是内存压力大，建议调大 -Xmx"));
+                    Lang.get("mctm.diag.gc.title", gcTime10s),
+                    Lang.get("mctm.diag.gc.detail")));
         }
 
         if (isShaderActive() && avgFps > 0 && avgFps < 60) {
             items.add(new DiagItem("info",
-                    "检测到光影已开启，帧率偏低",
-                    "关掉光影或换成轻量光影能明显提升帧率"));
+                    Lang.get("mctm.diag.shader.title"),
+                    Lang.get("mctm.diag.shader.detail")));
         }
 
         return items;

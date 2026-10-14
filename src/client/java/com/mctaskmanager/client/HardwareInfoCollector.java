@@ -41,7 +41,7 @@ public class HardwareInfoCollector {
 
     public static String getCpuName() {
         if (cachedCpu == null) {
-            if (isLoading()) return "读取中...";
+            if (isLoading()) return Lang.get("mctm.hardware.reading");
             // 没预加载就同步跑（兼容旧调用）
             getCpuNameInternal();
         }
@@ -50,7 +50,7 @@ public class HardwareInfoCollector {
 
     public static String getGpuName() {
         if (cachedGpu == null) {
-            if (isLoading()) return "读取中...";
+            if (isLoading()) return Lang.get("mctm.hardware.reading");
             getGpuNameInternal();
         }
         return cachedGpu;
@@ -80,7 +80,7 @@ public class HardwareInfoCollector {
         } else {
             result = readLinuxCpu();
         }
-        cachedCpu = isEmptyOrFail(result) ? "未知 CPU" : result;
+        cachedCpu = isEmptyOrFail(result) ? Lang.get("mctm.hardware.unknown.cpu") : result;
     }
 
     private static void getGpuNameInternal() {
@@ -98,7 +98,7 @@ public class HardwareInfoCollector {
             raw = run("lspci");
         }
         String picked = pickMainGpu(raw);
-        cachedGpu = isEmptyOrFail(picked) ? "未知显卡" : picked;
+        cachedGpu = isEmptyOrFail(picked) ? Lang.get("mctm.hardware.unknown.gpu") : picked;
     }
 
     private static void getTotalRamGBInternal() {
@@ -176,7 +176,6 @@ public class HardwareInfoCollector {
     private static boolean isEmptyOrFail(String s) {
         return s == null || s.isEmpty() || s.equals("读取失败");
     }
-
     private static String run(String cmd) {
         try {
             Process p = Runtime.getRuntime().exec(cmd);

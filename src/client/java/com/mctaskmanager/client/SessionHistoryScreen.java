@@ -71,23 +71,23 @@ public class SessionHistoryScreen extends Screen {
         this.lastMouseX = mouseX;
         this.lastMouseY = mouseY;
 
-        g.fill(0, 0, this.width, this.height, PageDraw.COL_BG);
-        g.fill(0, 0, this.width, TOP_BAR_HEIGHT, PageDraw.COL_BG_MENU);
-        g.fill(0, TOP_BAR_HEIGHT, this.width, TOP_BAR_HEIGHT + 1, PageDraw.COL_SEP);
+        g.fill(0, 0, this.width, this.height, PageDraw.COL_BG());
+        g.fill(0, 0, this.width, TOP_BAR_HEIGHT, PageDraw.COL_BG_MENU());
+        g.fill(0, TOP_BAR_HEIGHT, this.width, TOP_BAR_HEIGHT + 1, PageDraw.COL_SEP());
 
-        PageDraw.text(g, this.title.getString(), 10, 8, PageDraw.COL_TEXT);
+        PageDraw.text(g, this.title.getString(), 10, 8, PageDraw.COL_TEXT());
 
         List<SessionManager.SessionRecord> sessions = SessionManager.getSessions();
 
-        PageDraw.text(g, "共 " + sessions.size() + " 条记录",
-                this.width - 130, 8, PageDraw.COL_TEXT_SECOND);
+        PageDraw.text(g, Lang.get("mctm.session.count", sessions.size()),
+                this.width - 130, 8, PageDraw.COL_TEXT_SECOND());
 
         deleteButtons.clear();
 
         if (sessions.isEmpty()) {
-            PageDraw.text(g, "还没有游戏记录", 20, TOP_BAR_HEIGHT + 20, PageDraw.COL_TEXT);
-            PageDraw.text(g, "(进入任意世界，退出后就会自动保存)",
-                    20, TOP_BAR_HEIGHT + 36, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, Lang.get("mctm.session.empty"), 20, TOP_BAR_HEIGHT + 20, PageDraw.COL_TEXT());
+            PageDraw.text(g, Lang.get("mctm.session.empty_hint"),
+                    20, TOP_BAR_HEIGHT + 36, PageDraw.COL_TEXT_SECOND());
             super.render(g, mouseX, mouseY, delta);
             return;
         }
@@ -109,44 +109,44 @@ public class SessionHistoryScreen extends Screen {
                     && mouseY >= y && mouseY < y + ROW_HEIGHT - 4
                     && mouseY >= viewportTop && mouseY <= viewportBottom;
 
-            int bg = hovered ? 0x18FFFFFF : 0x08FFFFFF;
+            int bg = hovered ? PageDraw.COL_ROW_HOVER() : PageDraw.COL_ROW_ALT();
             g.fill(rowX, y, rowX + rowWidth, y + ROW_HEIGHT - 4, bg);
 
-            int accent = r.avgFps < 30 ? PageDraw.COL_RED
-                    : r.avgFps < 60 ? PageDraw.COL_YELLOW
-                    : PageDraw.COL_GREEN;
+            int accent = r.avgFps < 30 ? PageDraw.COL_RED()
+                    : r.avgFps < 60 ? PageDraw.COL_YELLOW()
+                    : PageDraw.COL_GREEN();
             g.fill(rowX, y, rowX + 3, y + ROW_HEIGHT - 4, accent);
 
             // 世界名 + 日期
-            PageDraw.text(g, r.worldName, rowX + 10, y + 5, PageDraw.COL_TEXT);
-            PageDraw.text(g, r.dateText(), rowX + rowWidth - 190, y + 5, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, r.worldName, rowX + 10, y + 5, PageDraw.COL_TEXT());
+            PageDraw.text(g, r.dateText(), rowX + rowWidth - 190, y + 5, PageDraw.COL_TEXT_SECOND());
 
             // 时长 + 帧率
-            PageDraw.text(g, "时长:", rowX + 10, y + 19, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, r.durationText(), rowX + 45, y + 19, PageDraw.COL_TEXT);
+            PageDraw.text(g, Lang.get("mctm.session.duration"), rowX + 10, y + 19, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, r.durationText(), rowX + 45, y + 19, PageDraw.COL_TEXT());
 
-            PageDraw.text(g, "平均:", rowX + 130, y + 19, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, r.avgFps + " FPS", rowX + 165, y + 19, accent);
+            PageDraw.text(g, Lang.get("mctm.session.avg"), rowX + 130, y + 19, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, Lang.get("mctm.unit.fps", r.avgFps), rowX + 165, y + 19, accent);
 
-            PageDraw.text(g, "最低:", rowX + 230, y + 19, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, r.minFps + "", rowX + 265, y + 19, PageDraw.COL_TEXT);
+            PageDraw.text(g, Lang.get("mctm.session.min"), rowX + 230, y + 19, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, String.valueOf(r.minFps), rowX + 265, y + 19, PageDraw.COL_TEXT());
 
-            PageDraw.text(g, "1% Low:", rowX + 300, y + 19, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, r.low1Percent + "", rowX + 350, y + 19, PageDraw.COL_TEXT);
+            PageDraw.text(g, Lang.get("mctm.session.low1"), rowX + 300, y + 19, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, String.valueOf(r.low1Percent), rowX + 350, y + 19, PageDraw.COL_TEXT());
 
-            PageDraw.text(g, "卡顿:", rowX + 400, y + 19, PageDraw.COL_TEXT_SECOND);
-            int lagColor = r.lagCount == 0 ? PageDraw.COL_TEXT : PageDraw.COL_YELLOW;
+            PageDraw.text(g, Lang.get("mctm.session.lag"), rowX + 400, y + 19, PageDraw.COL_TEXT_SECOND());
+            int lagColor = r.lagCount == 0 ? PageDraw.COL_TEXT() : PageDraw.COL_YELLOW();
             PageDraw.text(g, r.lagText(), rowX + 435, y + 19, lagColor);
 
             // 峰值
-            PageDraw.text(g, "内存峰值:", rowX + 10, y + 33, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, r.peakMemoryMB + " MB", rowX + 70, y + 33, PageDraw.COL_TEXT);
+            PageDraw.text(g, Lang.get("mctm.session.peak.memory"), rowX + 10, y + 33, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, r.peakMemoryMB + " MB", rowX + 70, y + 33, PageDraw.COL_TEXT());
 
-            PageDraw.text(g, "区块峰值:", rowX + 160, y + 33, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, r.peakChunks + "", rowX + 220, y + 33, PageDraw.COL_TEXT);
+            PageDraw.text(g, Lang.get("mctm.session.peak.chunks"), rowX + 160, y + 33, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, String.valueOf(r.peakChunks), rowX + 220, y + 33, PageDraw.COL_TEXT());
 
-            PageDraw.text(g, "实体峰值:", rowX + 270, y + 33, PageDraw.COL_TEXT_SECOND);
-            PageDraw.text(g, r.peakEntities + "", rowX + 330, y + 33, PageDraw.COL_TEXT);
+            PageDraw.text(g, Lang.get("mctm.session.peak.entities"), rowX + 270, y + 33, PageDraw.COL_TEXT_SECOND());
+            PageDraw.text(g, String.valueOf(r.peakEntities), rowX + 330, y + 33, PageDraw.COL_TEXT());
 
             // ===== 删除按钮 =====
             int btnW = 50;
@@ -163,15 +163,15 @@ public class SessionHistoryScreen extends Screen {
                 PageDraw.drawFlatButton(g, btnX, btnY, btnW, btnH, delHovered);
             } else {
                 // 平时半透明
-                g.fill(btnX, btnY, btnX + btnW, btnY + btnH, 0x15FFFFFF);
-                g.fill(btnX, btnY, btnX + btnW, btnY + 1, 0x30FFFFFF);
-                g.fill(btnX, btnY + btnH - 1, btnX + btnW, btnY + btnH, 0x30FFFFFF);
-                g.fill(btnX, btnY, btnX + 1, btnY + btnH, 0x30FFFFFF);
-                g.fill(btnX + btnW - 1, btnY, btnX + btnW, btnY + btnH, 0x30FFFFFF);
+                g.fill(btnX, btnY, btnX + btnW, btnY + btnH, PageDraw.COL_ROW_ALT());
+                g.fill(btnX, btnY, btnX + btnW, btnY + 1, PageDraw.COL_BORDER());
+                g.fill(btnX, btnY + btnH - 1, btnX + btnW, btnY + btnH, PageDraw.COL_BORDER());
+                g.fill(btnX, btnY, btnX + 1, btnY + btnH, PageDraw.COL_BORDER());
+                g.fill(btnX + btnW - 1, btnY, btnX + btnW, btnY + btnH, PageDraw.COL_BORDER());
             }
 
-            int delTextColor = delHovered ? PageDraw.COL_RED : PageDraw.COL_TEXT_SECOND;
-            PageDraw.textCentered(g, "删除", btnX + btnW / 2, btnY + 3, delTextColor);
+            int delTextColor = delHovered ? PageDraw.COL_RED() : PageDraw.COL_TEXT_SECOND();
+            PageDraw.textCentered(g, Lang.get("mctm.session.delete"), btnX + btnW / 2, btnY + 3, delTextColor);
 
             // 记录按钮区域，供 mouseClicked 用
             deleteButtons.add(new int[]{btnX, btnY, btnW, btnH, realIndex});
@@ -187,12 +187,12 @@ public class SessionHistoryScreen extends Screen {
         int viewHeight = viewportBottom - viewportTop;
         if (contentHeight > viewHeight) {
             int barX = this.width - 8;
-            g.fill(barX, viewportTop, barX + 4, viewportBottom, 0xFFB0B0B0);
+            g.fill(barX, viewportTop, barX + 4, viewportBottom, PageDraw.COL_SCROLL_TRACK());
             double ratio = (double) viewHeight / contentHeight;
             int thumbH = Math.max(20, (int) (viewHeight * ratio));
             double scrollRatio = (double) scrollOffset / Math.max(1, contentHeight - viewHeight);
             int thumbY = viewportTop + (int) ((viewHeight - thumbH) * scrollRatio);
-            g.fill(barX, thumbY, barX + 4, thumbY + thumbH, 0xFF888888);
+            g.fill(barX, thumbY, barX + 4, thumbY + thumbH, PageDraw.COL_SCROLL_THUMB());
         }
 
         super.render(g, mouseX, mouseY, delta);

@@ -15,7 +15,7 @@ public class OverviewPage extends BasePage {
         Minecraft mc = Minecraft.getInstance();
         FpsMonitor monitor = MinecraftTaskManagerClient.getFpsMonitor();
 
-        PageDraw.text(g, Lang.get("mctm.overview.realtime"), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.overview.realtime"), x, y, PageDraw.COL_TEXT());
         y += 14;
 
         int avgFps = monitor.getAverageFps();
@@ -25,21 +25,21 @@ public class OverviewPage extends BasePage {
         double avgFrameTime = monitor.getAverageFrameTime();
         long avgMem = monitor.getAverageMemoryMB();
 
-        int fpsColor = avgFps < monitor.getThreshold() ? PageDraw.COL_RED : PageDraw.COL_TEXT;
+        int fpsColor = avgFps < monitor.getThreshold() ? PageDraw.COL_RED() : PageDraw.COL_TEXT();
 
-        PageDraw.text(g, Lang.get("mctm.overview.current", mc.getFps()), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.overview.current", mc.getFps()), x, y, PageDraw.COL_TEXT());
         PageDraw.text(g, Lang.get("mctm.overview.average", avgFps), x + 100, y, fpsColor);
-        PageDraw.text(g, Lang.get("mctm.overview.minimum", minFps), x + 200, y, PageDraw.COL_TEXT);
-        PageDraw.text(g, Lang.get("mctm.overview.low1", low1), x + 300, y, PageDraw.COL_GOLD);
-        PageDraw.text(g, Lang.get("mctm.overview.low01", low01), x + 400, y, PageDraw.COL_RED);
+        PageDraw.text(g, Lang.get("mctm.overview.minimum", minFps), x + 200, y, PageDraw.COL_TEXT());
+        PageDraw.text(g, Lang.get("mctm.overview.low1", low1), x + 300, y, PageDraw.COL_GOLD());
+        PageDraw.text(g, Lang.get("mctm.overview.low01", low01), x + 400, y, PageDraw.COL_RED());
         y += 12;
 
         PageDraw.text(g, Lang.get("mctm.overview.frametime", String.format("%.2f", avgFrameTime)),
-                x, y, PageDraw.COL_TEXT);
-        PageDraw.text(g, Lang.get("mctm.overview.memoryused", avgMem), x + 120, y, PageDraw.COL_TEXT);
+                x, y, PageDraw.COL_TEXT());
+        PageDraw.text(g, Lang.get("mctm.overview.memoryused", avgMem), x + 120, y, PageDraw.COL_TEXT());
         y += 16;
 
-        PageDraw.text(g, Lang.get("mctm.overview.trend"), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.overview.trend"), x, y, PageDraw.COL_TEXT());
         y += 12;
 
         int graphTotalWidth = parent.width - x - 20;
@@ -54,42 +54,42 @@ public class OverviewPage extends BasePage {
         double fpsMax = Math.max(getMax(fpsData) * 1.15, 60);
         renderGraphRow(g, x, y, graphTotalWidth, labelWidth, graphHeight,
                 Lang.get("mctm.overview.graph.fps"), String.format("%d", mc.getFps()),
-                fpsData, PageDraw.COL_GREEN, fpsMax, String.format("%.0f", fpsMax));
+                fpsData, PageDraw.COL_GREEN(), fpsMax, String.format("%.0f", fpsMax));
         y += graphHeight + rowGap;
 
         double ftMax = Math.max(getMax(ftData) * 1.5, 20);
         renderGraphRow(g, x, y, graphTotalWidth, labelWidth, graphHeight,
                 Lang.get("mctm.overview.graph.frametime"), String.format("%.2f ms", avgFrameTime),
-                ftData, PageDraw.COL_YELLOW, ftMax, String.format("%.1f", ftMax));
+                ftData, PageDraw.COL_YELLOW(), ftMax, String.format("%.1f", ftMax));
         y += graphHeight + rowGap;
 
         long maxHeapMB = Runtime.getRuntime().maxMemory() / 1024 / 1024;
         double memMax = Math.max(maxHeapMB, 1);
         renderGraphRow(g, x, y, graphTotalWidth, labelWidth, graphHeight,
                 Lang.get("mctm.overview.graph.memory"), avgMem + " MB",
-                memData, PageDraw.COL_BLUE, memMax, String.format("%d", maxHeapMB));
+                memData, PageDraw.COL_BLUE(), memMax, String.format("%d", maxHeapMB));
         y += graphHeight + 12;
 
-        PageDraw.text(g, Lang.get("mctm.overview.gcstats"), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.overview.gcstats"), x, y, PageDraw.COL_TEXT());
         y += 12;
         PageDraw.text(g, Lang.get("mctm.overview.gc.total",
-                monitor.getTotalGcCount(), monitor.getTotalGcTime()), x, y, PageDraw.COL_TEXT_SECOND);
+                monitor.getTotalGcCount(), monitor.getTotalGcTime()), x, y, PageDraw.COL_TEXT_SECOND());
         y += 12;
         long gcTime10s = monitor.getGcTimeLast10s();
-        int gcColor = gcTime10s > 2000 ? PageDraw.COL_RED : PageDraw.COL_TEXT_SECOND;
+        int gcColor = gcTime10s > 2000 ? PageDraw.COL_RED() : PageDraw.COL_TEXT_SECOND();
         PageDraw.text(g, Lang.get("mctm.overview.gc.last10s",
                 monitor.getGcCountLast10s(), gcTime10s), x, y, gcColor);
         y += 16;
 
-        PageDraw.text(g, Lang.get("mctm.overview.snapshots"), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.overview.snapshots"), x, y, PageDraw.COL_TEXT());
         y += 14;
 
         var snapshots = monitor.getSnapshots();
         if (snapshots.isEmpty()) {
-            PageDraw.text(g, Lang.get("mctm.overview.snapshot.none"), x, y, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, Lang.get("mctm.overview.snapshot.none"), x, y, PageDraw.COL_TEXT_SECOND());
             y += 12;
         } else {
-            PageDraw.text(g, Lang.get("mctm.overview.snapshot.header"), x, y, PageDraw.COL_TEXT_SECOND);
+            PageDraw.text(g, Lang.get("mctm.overview.snapshot.header"), x, y, PageDraw.COL_TEXT_SECOND());
             y += 10;
             PageDraw.drawSepH(g, x, y, parent.width - x - 15);
             y += 3;
@@ -98,37 +98,37 @@ public class OverviewPage extends BasePage {
                 var snap = snapshots.get(i);
                 PageDraw.text(g, String.format("%s  %d  %-12s  %s",
                                 snap.timeText(), snap.fps, snap.dimShort(), snap.coordText()),
-                        x, y, PageDraw.COL_TEXT);
+                        x, y, PageDraw.COL_TEXT());
                 y += 11;
             }
         }
         y += 8;
 
-        PageDraw.text(g, Lang.get("mctm.overview.settings"), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.overview.settings"), x, y, PageDraw.COL_TEXT());
         y += 14;
 
         PageDraw.text(g, Lang.get("mctm.overview.resolution",
                         mc.getWindow().getWidth() + " x " + mc.getWindow().getHeight()),
-                x, y, PageDraw.COL_TEXT);
+                x, y, PageDraw.COL_TEXT());
         y += 11;
         PageDraw.text(g, Lang.get("mctm.overview.renderdistance",
-                mc.options.renderDistance().get()), x, y, PageDraw.COL_TEXT);
+                mc.options.renderDistance().get()), x, y, PageDraw.COL_TEXT());
         y += 11;
         PageDraw.text(g, Lang.get("mctm.overview.vsync",
-                Lang.onOff(mc.options.enableVsync().get())), x, y, PageDraw.COL_TEXT);
+                Lang.onOff(mc.options.enableVsync().get())), x, y, PageDraw.COL_TEXT());
         y += 11;
         PageDraw.text(g, Lang.get("mctm.overview.fpslimit",
-                mc.options.framerateLimit().get()), x, y, PageDraw.COL_TEXT);
+                mc.options.framerateLimit().get()), x, y, PageDraw.COL_TEXT());
         y += 14;
 
-        PageDraw.text(g, Lang.get("mctm.overview.stats"), x, y, PageDraw.COL_TEXT);
+        PageDraw.text(g, Lang.get("mctm.overview.stats"), x, y, PageDraw.COL_TEXT());
         y += 14;
         PageDraw.text(g, Lang.get("mctm.overview.modcount",
                         com.mctaskmanager.client.DataCache.getModRows().size()),
-                x, y, PageDraw.COL_TEXT);
+                x, y, PageDraw.COL_TEXT());
         y += 11;
         PageDraw.text(g, Lang.get("mctm.overview.packcount",
-                mc.options.resourcePacks.size()), x, y, PageDraw.COL_TEXT);
+                mc.options.resourcePacks.size()), x, y, PageDraw.COL_TEXT());
         y += 12;
 
         return y;
@@ -139,18 +139,18 @@ public class OverviewPage extends BasePage {
                                 String label, String currentValue,
                                 List<Double> data, int lineColor, double maxValue,
                                 String maxLabel) {
-        PageDraw.text(g, label, x, y + 1, PageDraw.COL_TEXT);
-        PageDraw.text(g, currentValue, x, y + 11, PageDraw.COL_TEXT_SECOND);
+        PageDraw.text(g, label, x, y + 1, PageDraw.COL_TEXT());
+        PageDraw.text(g, currentValue, x, y + 11, PageDraw.COL_TEXT_SECOND());
 
         int gx = x + labelWidth;
         int gw = totalWidth - labelWidth;
 
-        PageDraw.drawBox(g, gx, y, gw, height, PageDraw.COL_SLOT, PageDraw.COL_BORDER);
+        PageDraw.drawBox(g, gx, y, gw, height, PageDraw.COL_SLOT(), PageDraw.COL_BORDER());
         drawGraphLine(g, data, gx + 2, y + 2, gw - 4, height - 4, lineColor, maxValue);
 
         String scaleText = Lang.get("mctm.overview.graph.max", maxLabel);
         PageDraw.text(g, scaleText,
-                gx + gw - PageDraw.textWidth(scaleText) - 4, y + 1, PageDraw.COL_TEXT_SECOND);
+                gx + gw - PageDraw.textWidth(scaleText) - 4, y + 1, PageDraw.COL_TEXT_SECOND());
     }
 
     private double getMax(List<Double> data) {
